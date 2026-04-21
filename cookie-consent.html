@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cookie Consent</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #f5f0e8;
+      --surface: #fffdf7;
+      --border: #d6cdb8;
+      --text: #1a1612;
+      --text-muted: #7a7060;
+      --accent: #c8430a;
+      --accent-hover: #a83608;
+      --accent-light: rgba(200, 67, 10, 0.08);
+      --cookie: #8b5e3c;
+      --shadow: rgba(26, 22, 18, 0.12);
+    }
+
+    body {
+      background: var(--bg);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--text);
+    }
+
+    /* subtle grain texture */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: 200px 200px;
+      pointer-events: none;
+      opacity: .5;
+    }
+
+    /* ── page content (behind banner) ── */
+    .page-content {
+      text-align: center;
+      padding: 2rem;
+      max-width: 520px;
+    }
+
+    .page-content__icon {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .page-content__title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.6rem, 5vw, 2.4rem);
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: .8rem;
+    }
+
+    .page-content__sub {
+      font-size: .95rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    /* ── cookie banner ── */
+    .cookie-banner {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 3rem);
+      max-width: 560px;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 18px;
+      padding: 1.4rem 1.6rem;
+      box-shadow:
+        0 4px 6px -1px var(--shadow),
+        0 20px 40px -8px var(--shadow);
+      display: flex;
+      align-items: flex-start;
+      gap: 1.1rem;
+      z-index: 999;
+
+      /* entrance animation */
+      animation: slideUp .4s cubic-bezier(.34,1.56,.64,1) forwards;
+    }
+
+    /* hidden state — your JS toggles this */
+    .cookie-banner.hidden {
+      animation: slideDown .3s ease forwards;
+      pointer-events: none;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateX(-50%) translateY(30px); }
+      to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+
+    @keyframes slideDown {
+      from { opacity: 1; transform: translateX(-50%) translateY(0); }
+      to   { opacity: 0; transform: translateX(-50%) translateY(30px); }
+    }
+
+    /* cookie illustration */
+    .cookie-banner__icon {
+      font-size: 2.2rem;
+      flex-shrink: 0;
+      margin-top: .1rem;
+      line-height: 1;
+    }
+
+    .cookie-banner__body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .cookie-banner__title {
+      font-family: 'Syne', sans-serif;
+      font-size: .95rem;
+      font-weight: 700;
+      margin-bottom: .35rem;
+      color: var(--text);
+    }
+
+    .cookie-banner__text {
+      font-size: .82rem;
+      line-height: 1.65;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+
+    .cookie-banner__text a {
+      color: var(--accent);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .cookie-banner__actions {
+      display: flex;
+      gap: .6rem;
+      flex-wrap: wrap;
+    }
+
+    /* Accept button */
+    .btn-accept {
+      flex: 1;
+      min-width: 120px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: .65rem 1.2rem;
+      font-family: 'Syne', sans-serif;
+      font-size: .82rem;
+      font-weight: 700;
+      letter-spacing: .04em;
+      cursor: pointer;
+      transition: background .2s, transform .15s;
+    }
+
+    .btn-accept:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-accept:active {
+      transform: translateY(0);
+    }
+
+    /* Decline button */
+    .btn-decline {
+      flex: 1;
+      min-width: 100px;
+      background: transparent;
+      color: var(--text-muted);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: .65rem 1.2rem;
+      font-family: 'Syne', sans-serif;
+      font-size: .82rem;
+      font-weight: 600;
+      letter-spacing: .04em;
+      cursor: pointer;
+      transition: border-color .2s, color .2s, transform .15s;
+    }
+
+    .btn-decline:hover {
+      border-color: var(--text-muted);
+      color: var(--text);
+      transform: translateY(-1px);
+    }
+
+    /* ── success toast (shown after acceptance) ── */
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #1a1612;
+      color: #f5f0e8;
+      font-family: 'Syne', sans-serif;
+      font-size: .82rem;
+      font-weight: 600;
+      padding: .7rem 1.4rem;
+      border-radius: 999px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .3s, transform .3s;
+      white-space: nowrap;
+      z-index: 1000;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Page background content -->
+  <div class="page-content">
+    <span class="page-content__icon">🌐</span>
+    <h1 class="page-content__title">Welcome to Our Site</h1>
+    <p class="page-content__sub">
+      This is a sample page. The cookie consent banner appears at the bottom
+      of the screen when a user visits for the first time.
+    </p>
+  </div>
+
+  <!-- ── Cookie Banner ── -->
+  <div class="cookie-banner" id="cookieBanner">
+    <span class="cookie-banner__icon">🍪</span>
+    <div class="cookie-banner__body">
+      <p class="cookie-banner__title">We value your privacy</p>
+      <p class="cookie-banner__text">
+        We use cookies to enhance your browsing experience, serve personalised content,
+        and analyse our traffic. By clicking <strong>Accept</strong>, you consent to
+        our use of cookies. <a href="#">Learn more</a>
+      </p>
+      <div class="cookie-banner__actions">
+        <button class="btn-accept" id="btnAccept">Accept All</button>
+        <button class="btn-decline" id="btnDecline">Decline</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success toast -->
+  <div class="toast" id="toast">✓ Preferences saved!</div>
+
+  <!-- =============================================
+       YOUR JS GOES HERE
+       =============================================
+       Hints / targets for your script:
+
+       Elements:
+         • Banner       → #cookieBanner
+         • Accept btn   → #btnAccept
+         • Decline btn  → #btnDecline
+         • Toast        → #toast
+
+       Logic:
+         1. Listen for click on #btnAccept and #btnDecline
+         2. Add the "hidden" class to #cookieBanner  (CSS animates it out)
+         3. Optionally show the toast: add "show" class, 
+            then remove it after ~2 seconds
+         4. (Bonus) use localStorage to remember the choice
+            so the banner doesn't show on repeat visits
+  ================================================= -->
+  <script>
+    // TODO: your JavaScript goes here
+  </script>
+
+</body>
+</html>
